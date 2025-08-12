@@ -1,8 +1,11 @@
-console.log("Hello world");
+let humanScore = 0;
+let computerScore = 0;
 
-let humanScore=0;
-let computerScore=0;
-let i=0;
+const rock = document.querySelector(".rock");
+const paper = document.querySelector(".paper");
+const scissors = document.querySelector(".scissors");
+const resultDiv = document.getElementById("result");
+const scoreDiv = document.getElementById("score");
 
 function getComputerChoice(){
     let respuestaCompu;
@@ -21,47 +24,65 @@ function getComputerChoice(){
     }
 }
 
-function getHumanChoice(){
-    let respuestaHumano;
-    respuestaHumano= prompt("Cuál será su opción:")
-    console.log("La decisión del humano ha sido: "+respuestaHumano);
-    return respuestaHumano;
+function displayResult(message) {
+    resultDiv.textContent = message;
 }
 
-function playGround(humanChoice,computerChoice){
-    humanChoiceMinuscula = humanChoice.toLowerCase();
+function displayScore() {
+    scoreDiv.textContent = `Puntaje: Humano ${humanScore} - Computadora ${computerScore}`;
+}
+
+function playRound(humanChoice, computerChoice) {
+    let humanChoiceMinuscula = humanChoice.toLowerCase();
+    if (humanChoiceMinuscula!=="rock" && humanChoiceMinuscula!=="paper" && humanChoiceMinuscula!=="scissors"){
+        console.log("Opción inválida, por favor ingrese rock, paper o scissors");
+        return;
+    }
     console.log(humanChoiceMinuscula+ " contra " + computerChoice);
     if (humanChoiceMinuscula===computerChoice){
         console.log("Empate");
         return null;
     }
-    if (humanChoiceMinuscula==="scissors" && computerChoice==="rock"){
-        console.log("Perdiste");
+    if (
+        (humanChoiceMinuscula==="scissors" && computerChoice==="rock") ||
+        (humanChoiceMinuscula==="rock" && computerChoice==="paper") ||
+        (humanChoiceMinuscula==="paper" && computerChoice==="scissors")
+    ){
         computerScore++;
-    }
-    if (humanChoiceMinuscula==="rock" && computerChoice==="paper"){
-        console.log("Perdiste");
-        computerScore++;
-    }
-    if (humanChoiceMinuscula==="paper" && computerChoice==="scissors"){
-        console.log("Perdiste");
-        computerScore++;
-    }
-    else{
-        console.log("Ganaste");
+        displayResult(`Perdiste: ${computerChoice} vence a ${humanChoiceMinuscula}`);
+    } else {
         humanScore++;
+        displayResult(`Ganaste: ${humanChoiceMinuscula} vence a ${computerChoice}`);
     }
 
+    displayScore();
+
+    if (humanScore === 5 || computerScore === 5) {
+        if (humanScore === 5) {
+            displayResult("¡Felicidades! Ganaste el juego.");
+        } else {
+            displayResult("La computadora ganó el juego.");
+        }
+        rock.disabled = true;
+        paper.disabled = true;
+        scissors.disabled = true;
+        scoreDiv.textContent += " (Juego terminado)";
+    }
 }
 
+rock.addEventListener("click", () => {
+    playRound("rock", getComputerChoice());
+});
+paper.addEventListener("click", () => {
+    playRound("paper", getComputerChoice());
+});
+scissors.addEventListener("click", () => {
+    playRound("scissors", getComputerChoice());
+});
 
-for(i=0; i<5; i++){
-    let humano= getHumanChoice();
-    let computadora= getComputerChoice()
-    playGround(humano, computadora);
-}
+// Mostrar puntaje inicial
+displayScore();
 
-console.log("El juego ha terminado, el puntaje quedó: " + humanScore + " - " + computerScore);
 
 
 
